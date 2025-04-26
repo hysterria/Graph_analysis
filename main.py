@@ -93,6 +93,14 @@ class GraphApp:
                                           **button_style)
         self.boltzmann_button.pack(fill=tk.X, pady=2)
 
+        self.ant_button = tk.Button(algo_frame, text="Муравьиный", command=self.run_ant,
+                                          **button_style)
+        self.ant_button.pack(fill=tk.X, pady=2)
+
+        self.odeyalo_button = tk.Button(algo_frame, text="Одеяло", command=self.run_odeyalo,
+                                          **button_style)
+        self.odeyalo_button.pack(fill=tk.X, pady=2)
+
         # Управление
         control_frame = tk.Frame(self.control_frame, bg='#f0f0f0')
         control_frame.grid(row=0, column=1, padx=5, pady=5, sticky='nw')
@@ -105,39 +113,77 @@ class GraphApp:
         self.cencelator_button = tk.Button(control_frame, text="Отменить", command=self.cencelator, **button_style)
         self.cencelator_button.pack(fill=tk.X, pady=2)
 
-        # Параметры + создание полного графа
-        params_frame = tk.Frame(self.control_frame, bg='#f0f0f0')
-        params_frame.grid(row=0, column=2, padx=5, pady=5, sticky='nw')
+        # Создаем два столбца для параметров
+        self.params_container = tk.Frame(self.control_frame, bg='#f0f0f0')
+        self.params_container.grid(row=0, column=2, padx=5, pady=5, sticky='nw')
 
-        tk.Label(params_frame, text="Параметры", **label_style).pack(anchor='w')
+        # Левый столбец - параметры отжига
+        left_params = tk.Frame(self.params_container, bg='#f0f0f0')
+        left_params.grid(row=0, column=0, padx=5, sticky='nw')
 
-        tk.Label(params_frame, text="T0:", **label_style).pack(anchor='w')
-        self.initial_temp_entry = tk.Entry(params_frame, **entry_style)
+        tk.Label(left_params, text="Параметры отжига", **label_style).pack(anchor='w')
+        tk.Label(left_params, text="T0:", **label_style).pack(anchor='w')
+        self.initial_temp_entry = tk.Entry(left_params, **entry_style)
         self.initial_temp_entry.insert(0, "1000")
         self.initial_temp_entry.pack(fill=tk.X, pady=2)
 
-        tk.Label(params_frame, text="Охлаждение:", **label_style).pack(anchor='w')
-        self.cooling_rate_entry = tk.Entry(params_frame, **entry_style)
+        tk.Label(left_params, text="Охлаждение:", **label_style).pack(anchor='w')
+        self.cooling_rate_entry = tk.Entry(left_params, **entry_style)
         self.cooling_rate_entry.insert(0, "0.995")
         self.cooling_rate_entry.pack(fill=tk.X, pady=2)
 
-        tk.Label(params_frame, text="Итерации:", **label_style).pack(anchor='w')
-        self.iterations_entry = tk.Entry(params_frame, **entry_style)
+        tk.Label(left_params, text="Итерации:", **label_style).pack(anchor='w')
+        self.iterations_entry = tk.Entry(left_params, **entry_style)
         self.iterations_entry.insert(0, "1000")
         self.iterations_entry.pack(fill=tk.X, pady=2)
 
-        tk.Label(params_frame, text="T0 (Больцман):", **label_style).pack(anchor='w')
-        self.boltzmann_temp_entry = tk.Entry(params_frame, **entry_style)
+        tk.Label(left_params, text="T0 (Больцман):", **label_style).pack(anchor='w')
+        self.boltzmann_temp_entry = tk.Entry(left_params, **entry_style)
         self.boltzmann_temp_entry.insert(0, "1000")
         self.boltzmann_temp_entry.pack(fill=tk.X, pady=2)
 
-        tk.Label(params_frame, text="Макс. итер:", **label_style).pack(anchor='w')
-        self.boltzmann_iter_entry = tk.Entry(params_frame, **entry_style)
+        tk.Label(left_params, text="Макс. итер:", **label_style).pack(anchor='w')
+        self.boltzmann_iter_entry = tk.Entry(left_params, **entry_style)
         self.boltzmann_iter_entry.insert(0, "10000")
         self.boltzmann_iter_entry.pack(fill=tk.X, pady=2)
 
+        # Правый столбец - муравьиные параметры
+        right_params = tk.Frame(self.params_container, bg='#f0f0f0')
+        right_params.grid(row=0, column=1, padx=5, sticky='nw')
+
+        tk.Label(right_params, text="Муравьиные параметры", **label_style).pack(anchor='w')
+        tk.Label(right_params, text="Муравьев:", **label_style).pack(anchor='w')
+        self.num_ants_entry = tk.Entry(right_params, **entry_style)
+        self.num_ants_entry.insert(0, "10")
+        self.num_ants_entry.pack(fill=tk.X, pady=2)
+
+        tk.Label(right_params, text="Итерации:", **label_style).pack(anchor='w')
+        self.ant_iter_entry = tk.Entry(right_params, **entry_style)
+        self.ant_iter_entry.insert(0, "100")
+        self.ant_iter_entry.pack(fill=tk.X, pady=2)
+
+        tk.Label(right_params, text="Альфа:", **label_style).pack(anchor='w')
+        self.alpha_entry = tk.Entry(right_params, **entry_style)
+        self.alpha_entry.insert(0, "1.0")
+        self.alpha_entry.pack(fill=tk.X, pady=2)
+
+        tk.Label(right_params, text="Бета:", **label_style).pack(anchor='w')
+        self.beta_entry = tk.Entry(right_params, **entry_style)
+        self.beta_entry.insert(0, "2.0")
+        self.beta_entry.pack(fill=tk.X, pady=2)
+
+        tk.Label(right_params, text="Испарение:", **label_style).pack(anchor='w')
+        self.rho_entry = tk.Entry(right_params, **entry_style)
+        self.rho_entry.insert(0, "2.0")
+        self.rho_entry.pack(fill=tk.X, pady=2)
+
+        tk.Label(right_params, text="q:", **label_style).pack(anchor='w')
+        self.q_entry = tk.Entry(right_params, **entry_style)
+        self.q_entry.insert(0, "2.0")
+        self.q_entry.pack(fill=tk.X, pady=2)
+
         # Кнопка создания полного графа
-        self.complete_graph_frame = tk.Frame(params_frame, bg='#f0f0f0')
+        self.complete_graph_frame = tk.Frame(control_frame, bg='#f0f0f0')
         self.complete_graph_frame.pack(fill=tk.X, pady=(10, 0))
 
         tk.Label(self.complete_graph_frame, text="Вершин:", **label_style).pack(side=tk.LEFT)
@@ -631,6 +677,149 @@ class GraphApp:
                 return path
 
         return None
+
+    def ant_colony_optimization(self, num_ants, iterations, alpha, beta, rho, q, start_node=None):
+        nodes = list(self.graph.nodes)
+        num_nodes = len(nodes)
+        if num_nodes < 2:
+            return None
+
+        # Инициализация феромонов на существующих ребрах
+        pheromone = {}
+        for i in self.graph.nodes:
+            pheromone[i] = {}
+            for j in self.graph.neighbors(i):
+                pheromone[i][j] = 1.0
+
+        best_path = None
+        best_distance = float('inf')
+
+        for _ in range(iterations):
+            ants_paths = []
+            for _ in range(num_ants):
+                path = []
+                if start_node is not None and start_node in nodes:
+                    current_node = start_node
+                else:
+                    current_node = random.choice(nodes)
+                visited = set([current_node])
+                path.append(current_node)
+                dead_end = False
+
+                while len(visited) < num_nodes:
+                    next_nodes = []
+                    probabilities = []
+                    total = 0.0
+
+                    for neighbor in self.graph.neighbors(current_node):
+                        if neighbor not in visited:
+                            pheromone_level = pheromone[current_node].get(neighbor, 0.0)
+                            weight = self.graph[current_node][neighbor]['weight']
+                            heuristic = 1.0 / weight
+                            prob = (pheromone_level ** alpha) * (heuristic ** beta)
+                            next_nodes.append(neighbor)
+                            probabilities.append(prob)
+                            total += prob
+
+                    if not next_nodes:
+                        dead_end = True
+                        break
+
+                    if total == 0:
+                        prob = 1.0 / len(next_nodes)
+                        probabilities = [prob] * len(next_nodes)
+                    else:
+                        probabilities = [p / total for p in probabilities]
+
+                    chosen = random.choices(next_nodes, weights=probabilities, k=1)[0]
+                    path.append(chosen)
+                    visited.add(chosen)
+                    current_node = chosen
+
+                if dead_end or not self.graph.has_edge(path[-1], path[0]):
+                    continue
+
+                ants_paths.append(path)
+
+            # Испарение феромона
+            for i in pheromone:
+                for j in pheromone[i]:
+                    pheromone[i][j] *= (1 - rho)
+
+            # Добавление феромона
+            for path in ants_paths:
+                distance = self.calculate_path_distance(path)
+                if distance == float('inf'):
+                    continue
+                delta_pheromone = q / distance
+                for k in range(len(path)):
+                    i = path[k]
+                    j = path[(k + 1) % len(path)]
+                    if j in pheromone.get(i, {}):
+                        pheromone[i][j] += delta_pheromone
+
+                if distance < best_distance:
+                    best_path = path.copy()
+                    best_distance = distance
+
+        return best_path if best_distance != float('inf') else None
+
+    # Модифицированные методы run_ant и run_odeyalo
+    def get_ant_params(self):
+        try:
+            return {
+                'num_ants': int(self.num_ants_entry.get()),
+                'iterations': int(self.ant_iter_entry.get()),
+                'alpha': float(self.alpha_entry.get()),
+                'beta': float(self.beta_entry.get()),
+                'rho': float(self.rho_entry.get()),
+                'q': float(self.q_entry.get())
+            }
+        except ValueError:
+            messagebox.showerror("Ошибка", "Некорректные параметры муравьиного алгоритма")
+            return None
+
+    def run_ant(self):
+        if len(self.graph.nodes) < 2:
+            messagebox.showerror("Ошибка", "Граф должен содержать хотя бы 2 вершины")
+            return
+
+        params = self.get_ant_params()
+        if not params:
+            return
+
+        start_time = time.perf_counter()
+        best_path = self.ant_colony_optimization(**params)
+        elapsed = time.perf_counter() - start_time
+
+        if best_path:
+            distance = self.calculate_path_distance(best_path)
+            self.update_output(f"{distance:.2f}", f"{elapsed:.6f} сек")
+            self.draw_result(best_path)
+        else:
+            messagebox.showinfo("Информация", "Путь не найден")
+
+    def run_odeyalo(self):
+        if len(self.graph.nodes) < 2:
+            messagebox.showerror("Ошибка", "Граф должен содержать хотя бы 2 вершины")
+            return
+
+        params = self.get_ant_params()
+        if not params:
+            return
+
+        start_node = random.choice(list(self.graph.nodes))
+
+        start_time = time.perf_counter()
+        best_path = self.ant_colony_optimization(start_node=start_node, **params)
+        elapsed = time.perf_counter() - start_time
+
+        if best_path:
+            distance = self.calculate_path_distance(best_path)
+            self.update_output(f"{distance:.2f}", f"{elapsed:.6f} сек")
+            self.draw_result(best_path)
+        else:
+            messagebox.showinfo("Информация", "Путь не найден")
 
     def get_neighbor_path(self, path):
         new_path = path.copy()
